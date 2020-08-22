@@ -1,10 +1,19 @@
 package com.photoapp.api.users.to;
 
+import java.io.Serializable;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class UserTO {
+public class UserTO implements Serializable {
+
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	@Size(min = 3 , message = "First name must have at least 3 characters")
@@ -20,6 +29,10 @@ public class UserTO {
 	@NotNull
 	@Email
 	private String email;
+	
+	private String id;
+	
+	private String encryptedPassword;
 	
 	public String getFirstName() {
 		return firstName;
@@ -44,6 +57,21 @@ public class UserTO {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	
+	
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getEncryptedPassword() {
+		return encryptedPassword;
+	}
+	public void setEncryptedPassword(String encryptedPassword) {
+		this.encryptedPassword = encryptedPassword;
 	}
 	@Override
 	public String toString() {

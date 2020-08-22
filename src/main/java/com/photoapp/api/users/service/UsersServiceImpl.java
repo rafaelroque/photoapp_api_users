@@ -1,5 +1,7 @@
 package com.photoapp.api.users.service;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 import com.photoapp.api.users.to.UserTO;
@@ -9,6 +11,7 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public UserTO createUser(UserTO to) {
+		to.setId(UUID.randomUUID().toString());
 		return to;
 	}
 
