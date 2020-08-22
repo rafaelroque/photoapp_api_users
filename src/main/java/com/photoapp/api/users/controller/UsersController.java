@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.photoapp.api.users.service.UsersService;
 import com.photoapp.api.users.to.UserTO;
 
 @RestController
@@ -18,6 +19,9 @@ public class UsersController {
 	
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private UsersService service;
 
 	@GetMapping
 	public String status() {
@@ -25,7 +29,7 @@ public class UsersController {
 	}
 	
 	@PostMapping
-	public String createUser(@RequestBody @Valid UserTO userTo) {
-		return "Received TO "+userTo;
+	public UserTO createUser(@RequestBody @Valid UserTO userTo) {
+		return service.createUser(userTo);
 	}
 }
