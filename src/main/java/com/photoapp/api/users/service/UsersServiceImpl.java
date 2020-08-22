@@ -11,7 +11,7 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public UserTO createUser(UserTO to) {
-		to.setId(UUID.randomUUID().toString());
+		to.setUserId(UUID.randomUUID().toString());
 		return to;
 	}
 
