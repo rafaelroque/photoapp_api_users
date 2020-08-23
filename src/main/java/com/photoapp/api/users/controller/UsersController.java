@@ -4,6 +4,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,7 +31,8 @@ public class UsersController {
 	}
 	
 	@PostMapping
-	public UserTO createUser(@RequestBody @Valid UserTO userTo) {
-		return service.createUser(userTo);
+	public ResponseEntity<?> createUser(@RequestBody @Valid UserTO userTo) {
+		 service.createUser(userTo);
+		 return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 }
