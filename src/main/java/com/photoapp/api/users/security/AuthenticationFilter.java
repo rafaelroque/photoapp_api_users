@@ -1,0 +1,84 @@
+
+package com.photoapp.api.users.security;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.photoapp.api.users.service.UsersService;
+import com.photoapp.api.users.to.UserTO;
+import com.photoapp.api.users.util.Constants;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
+	private UsersService usersService;
+
+	private Environment env;
+	
+	@Autowired
+	public AuthenticationFilter(UsersService usersService , Environment env , AuthenticationManager authenticationManager) {
+		this.usersService = usersService;
+		this.env = env;
+		super.setAuthenticationManager(authenticationManager);
+	}
+
+	@Override
+	public Authentication attemptAuthentication(HttpServletRequest req , HttpServletResponse res)
+			throws AuthenticationException{
+
+		try {
+			LoginUser creds = new ObjectMapper()
+					.readValue(req.getInputStream() , LoginUser.class);
+
+
+			return getAuthenticationManager()
+					.authenticate(new UsernamePasswordAuthenticationToken(creds.getEmail(),creds.getPassword(), 
+							new ArrayList<>()));
+
+		}catch(IOException e) {
+			throw new RuntimeException();
+		}
+
+
+	}
+
+	@Override
+	protected void successfulAuthentication(HttpServletRequest req,
+			HttpServletResponse res,
+			FilterChain chain,
+			Authentication auth) throws IOException , ServletException {
+
+		String userName = ((User)auth.getPrincipal()).getUsername();
+		UserTO userTO = usersService.getUserDetailsByEmail(userName);
+
+		String token = Jwts.builder()
+				.setSubject(userTO.getUserId())
+				.setExpiration(new Date(System.currentTimeMillis() + Long.parseLong(env.getProperty(Constants.TOKEN_EXPIRATION_TIME))))
+				.signWith(SignatureAlgorithm.HS512, env.getProperty(Constants.TOKEN_SECRET))
+				.compact();
+
+		res.addHeader("token", token);
+		res.addHeader("userId", userTO.getUserId());
+
+
+	}
+
+}

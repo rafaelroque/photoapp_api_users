@@ -1,9 +1,12 @@
 package com.photoapp.api.users.service;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,24 @@ public class UsersServiceImpl implements UsersService {
 	
 		return ModelMapperUtil.returnDefaultModelMapper().map(user, UserTO.class);
 		
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User loggedUser = repository.findByEmail(username);
+		
+		if(loggedUser == null) {
+			throw new UsernameNotFoundException(username);
+		}
+		
+		return new org.springframework.security.core.userdetails.User(loggedUser.getEmail(),
+				loggedUser.getEncryptedPassword() , true , true , true , true , new ArrayList<>());
+	}
+
+	@Override
+	public UserTO getUserDetailsByEmail(String email) {
+		return ModelMapperUtil.returnDefaultModelMapper()
+				.map(repository.findByEmail(email), UserTO.class);
 	}
 
 }
