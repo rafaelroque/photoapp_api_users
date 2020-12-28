@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.photoapp.api.users.rest.CreateUserResponse;
-import com.photoapp.api.users.service.UsersService;
-import com.photoapp.api.users.to.UserTO;
-import com.photoapp.api.users.util.ModelMapperUtil;
+
 
 @RestController
 @RequestMapping("/users")
@@ -25,21 +22,19 @@ public class UsersController {
 	@Autowired
 	private Environment env;
 	
-	@Autowired
-	private UsersService service;
-
+	
 	@GetMapping
 	public String status() {
-		return "Working on port  "+env.getProperty("local.server.port");
+		return "Working ";
 	}
 	
-	@PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE },
-			     produces = {MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE }
-			    )
-	
-	public ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid UserTO userTo) {
-		 userTo = service.createUser(userTo);
-		 return ResponseEntity.status(HttpStatus.CREATED)
-				 .body(ModelMapperUtil.returnDefaultModelMapper().map(userTo, CreateUserResponse.class));
-	}
+//	@PostMapping(consumes = {MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE },
+//			     produces = {MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE }
+//			    )
+//	
+//	public ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid UserTO userTo) {
+//		 userTo = service.createUser(userTo);
+//		 return ResponseEntity.status(HttpStatus.CREATED)
+//				 .body(ModelMapperUtil.returnDefaultModelMapper().map(userTo, CreateUserResponse.class));
+//	}
 }
